@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/scroll_view_layout_start_end_padding"
+            android:paddingEnd="@dimen/scroll_view_layout_start_end_padding">
+
+            <TextView
+                android:id="@+id/tvArtProtHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/text_view_padding_h1"
+                android:paddingTop="@dimen/text_view_padding_h1"
+                android:paddingEnd="@dimen/text_view_padding_h1"
+                android:paddingBottom="@dimen/text_view_padding_h1"
+                android:text="@string/art_prot_header"
+                android:textSize="@dimen/text_size_h1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvArtProtUli1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli1"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli1Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/art_prot_uli1code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli2"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli2Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/art_prot_uli2code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli3"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli3Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/art_prot_uli3code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli4"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli4Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="@string/art_prot_uli4code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli5"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli5Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/art_prot_uli5code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli6"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli6Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/art_prot_uli6code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tvArtProtUli7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/art_prot_uli7"
+                android:textSize="@dimen/text_size_div" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/scroll_view_code_top_margin"
+                android:layout_marginBottom="@dimen/scroll_view_code_bottom_margin">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvArtProtUli7Code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/art_prot_uli7code"
+                        android:textSize="@dimen/text_size_code"
+                        android:typeface="monospace" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

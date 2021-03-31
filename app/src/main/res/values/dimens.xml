@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_folders">16sp</dimen>
+
+    <dimen name="text_size_h1">20sp</dimen>
+    <dimen name="text_size_h2">18sp</dimen>
+    <dimen name="text_size_h3">16sp</dimen>
+    <dimen name="text_size_h4">14sp</dimen>
+    <dimen name="text_size_h5">12sp</dimen>
+    <dimen name="text_size_h6">10sp</dimen>
+    <dimen name="default_text_size">10sp</dimen>
+    <dimen name="padding_default_left">10dp</dimen>
+    <dimen name="padding_default_right">5dp</dimen>
+    <dimen name="padding_default_top">0dp</dimen>
+    <dimen name="padding_default_bottom">0dp</dimen>
+    <dimen name="padding_code_vertical">20dp</dimen>
+    <dimen name="margin_default_left">0dp</dimen>
+    <dimen name="margin_default_right">0dp</dimen>
+    <dimen name="margin_default_top">0dp</dimen>
+    <dimen name="margin_default_bottom">0dp</dimen>
+    <!-- <dimen name="margin_header_top">30dp</dimen>-->
+    <!--<dimen name="margin_header_bottom">15dp</dimen>-->
+    <dimen name="margin_list_top">15dp</dimen>
+    <dimen name="margin_div_top">10dp</dimen>
+    <dimen name="margin_div_bottom">15dp</dimen>
+
+    <dimen name="padding_list_activity_vertical">20dp</dimen>
+    <dimen name="margin_list_activity_arrow">10dp</dimen>
+    <dimen name="margin_list_activity_row">2dp</dimen>
+
+    <dimen name="text_size_code">16sp</dimen>
+    <dimen name="text_size_div">16sp</dimen>
+
+
+    <dimen name="scroll_view_layout_start_end_padding">10dp</dimen>
+    <dimen name="scroll_view_code_top_margin">10dp</dimen>
+    <dimen name="scroll_view_code_bottom_margin">20dp</dimen>
+    <dimen name="text_view_padding_h1">20dp</dimen>
+</resources>

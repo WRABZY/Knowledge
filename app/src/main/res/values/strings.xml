@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Knowledge</string>
+    <string name="tv_Loading">Loading</string>
+    <string name="unorderedMarker">•</string>
+
+
+
+    <string name="art_prot_header">GHCi</string>
+    <string name="art_prot_uli1code">:q</string>
+    <string name="art_prot_uli1"> - exit</string>
+    <string name="art_prot_uli2code">ghci file.hs</string>
+    <string name="art_prot_uli2"> - file loading, method 1</string>
+    <string name="art_prot_uli3code">:l file.hs</string>
+    <string name="art_prot_uli3"> - file loading, method 2</string>
+    <string name="art_prot_uli4code">:r</string>
+    <string name="art_prot_uli4"> - file reloading</string>
+    <string name="art_prot_uli5code">:t &lt;something&gt;</string>
+    <string name="art_prot_uli5"> - type &lt;something&gt; info output</string>
+    <string name="art_prot_uli6code">:i &lt;something&gt;</string>
+    <string name="art_prot_uli6"> - &lt;something&gt; info output</string>
+    <string name="art_prot_uli7code">:k &lt;something&gt;</string>
+    <string name="art_prot_uli7"> - kind of &lt;something&gt; output</string>
+
+</resources>
