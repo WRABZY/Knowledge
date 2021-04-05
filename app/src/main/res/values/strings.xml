@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Knowledge</string>
-    <string name="tv_Loading">Loading</string>
+    <string name="tv_Loading">LOADING</string>
+    <string name="unknown_host">WAITING FOR SERVER CONNECTION</string>
+    <string name="file_not_found">THE APP MUST BE UPDATED</string>
     <string name="unorderedMarker">•</string>
 
 
@@ -20,5 +22,6 @@
     <string name="art_prot_uli6"> - &lt;something&gt; info output</string>
     <string name="art_prot_uli7code">:k &lt;something&gt;</string>
     <string name="art_prot_uli7"> - kind of &lt;something&gt; output</string>
+    <string name="logoDescription">stylized letter W</string>
 
 </resources>

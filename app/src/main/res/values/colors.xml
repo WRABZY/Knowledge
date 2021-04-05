@@ -21,5 +21,7 @@
     <color name="back_row">#202020</color>
     <color name="back_row_deep">#161616</color>
 
+    <color name="yellow_status">#FFB701</color>
+    <color name="red_status">#F10000</color>
     <color name="transparency">#00000000</color>
 </resources>

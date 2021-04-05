@@ -36,4 +36,5 @@
     <dimen name="scroll_view_code_top_margin">10dp</dimen>
     <dimen name="scroll_view_code_bottom_margin">20dp</dimen>
     <dimen name="text_view_padding_h1">20dp</dimen>
+    <dimen name="tvStatusTextSize">12sp</dimen>
 </resources>

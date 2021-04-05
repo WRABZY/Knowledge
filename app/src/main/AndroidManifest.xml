@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Knowledge"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ActivityMain">
+            android:name=".ActivityLoading">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
