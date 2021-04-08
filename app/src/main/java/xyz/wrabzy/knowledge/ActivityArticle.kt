@@ -2,6 +2,7 @@ package xyz.wrabzy.knowledge
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
@@ -9,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.setPadding
 import java.lang.StringBuilder
 
 import java.util.regex.Pattern
@@ -20,6 +22,11 @@ class ActivityArticle : AppCompatActivity() {
     private val ltPattern = Pattern.compile("&lt;")
     private val gtPattern = Pattern.compile("&gt;")
     private val nbspPattern = Pattern.compile("&nbsp;")
+    private val tagPattern = Pattern.compile("(<\\p{L}+\\d?>|</\\p{L}+\\d?>)")
+    private val tabPattern = Pattern.compile("((?<=[ \t])[ \t]+)")
+    private val emptyPattern = Pattern.compile("^[ \n\t\r]*$")
+    private val orderStack: Deque<Int> = ArrayDeque()
+    private val unorderedMarker by lazy { resources.getString(R.string.unorderedMarker) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +42,7 @@ class ActivityArticle : AppCompatActivity() {
         val scrollViewLayout = LinearLayout(this)
         scrollView.addView(scrollViewLayout)
         scrollViewLayout.orientation = LinearLayout.VERTICAL
+        scrollViewLayout.setPadding(resources.getDimension(R.dimen.padding_aa_layout).toInt())
 
         var articleText = StringBuilder()
         articleText.append(this.intent.getStringExtra("content"))
@@ -44,266 +52,313 @@ class ActivityArticle : AppCompatActivity() {
     }
 
     private fun buildActivity(text: StringBuilder, result: LinearLayout) {
-        val orderStack: Deque<Int> = ArrayDeque()
 
-        val pattern = Pattern.compile("(<\\p{L}+\\d?>|</\\p{L}+\\d?>)")
-        val matcher = pattern.matcher(text)
+        val tagMatcher = tagPattern.matcher(text)
 
-        var first: String
+        var firstTag: String
         var indexAfterFirst = 0
-        var second: String
+        var secondTag: String
         var indexOfSecond: Int
+
         var content: String
-        var trimmedContent: String
+
         var ordered = false
-        var firstListElem = true
-        var listElem = false
-        var mark = false
-        var code = false
-        val unorderedMarker = resources.getString(R.string.unorderedMarker)
 
-        var textSize = resources.getDimension(R.dimen.default_text_size)
-        var textTypeFace = Typeface.DEFAULT
-        var textStyle = Typeface.NORMAL
+        var codeView: TextView? = null
 
-        var textTopPadding = resources.getDimension(R.dimen.padding_default_top)
-        var textBotPadding = resources.getDimension(R.dimen.padding_default_bottom)
-        val textLeftPadding = resources.getDimension(R.dimen.padding_default_left)
-        val textRightPadding = resources.getDimension(R.dimen.padding_default_right)
+        var viewToAdd: View? = null
 
-        var textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-        var textBotMargin = resources.getDimension(R.dimen.margin_default_bottom)
-        val textLeftMargin = resources.getDimension(R.dimen.margin_default_left)
-        val textRightMargin = resources.getDimension(R.dimen.margin_default_right)
+        while (tagMatcher.find(indexAfterFirst)) {
 
-        var backgroundColor = resources.getColor(R.color.transparency, null)
-        var textColor = resources.getColor(R.color.text_default, null)
+            firstTag = tagMatcher.group()
+            indexAfterFirst = text.indexOf(firstTag, indexAfterFirst) + firstTag.length
 
-        while (matcher.find(indexAfterFirst)) {
-            first = matcher.group()
-            indexAfterFirst = text.indexOf(first, indexAfterFirst) + first.length
-            if (matcher.find(indexAfterFirst)) {
-                second = matcher.group()
-                indexOfSecond = text.indexOf(second, indexAfterFirst)
+            if (tagMatcher.find(indexAfterFirst)) {
+                secondTag = tagMatcher.group()
+                indexOfSecond = text.indexOf(secondTag, indexAfterFirst)
+                content = convertSpecials(text.substring(indexAfterFirst, indexOfSecond))
 
-                if (isOpening(first)) {
-                    when (first) {
-                        "<li>" -> {
-                            listElem = true
-                            /*if (!firstListElem) {*/
-                                textTopMargin = resources.getDimension(R.dimen.margin_list_top)
-                                textBotMargin = resources.getDimension(R.dimen.margin_default_bottom)
-                            /*} else {
-                                firstListElem = false
-                            }*/
-                        }
+                when(firstTag) {
+                    "<h1>" -> viewToAdd = if (secondTag == "</h1>") {
+                                              wrapH1(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<div>" -> {
-                            textTopMargin = resources.getDimension(R.dimen.margin_div_top)
-                            textBotMargin = resources.getDimension(R.dimen.margin_div_bottom)
-                            /*
-                            textSize = resources.getDimension(R.dimen.default_text_size)
-                            textStyle = Typeface.NORMAL
-                            textColor = resources.getColor(R.color.text_default, null)*/
-                        }
+                    "<h2>" -> viewToAdd = if (secondTag == "</h2>") {
+                                              wrapH2(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<h2>" -> {
-                            textSize = resources.getDimension(R.dimen.text_size_h2)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_header_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
-                        "<h1>" -> {
-                            textSize = resources.getDimension(R.dimen.text_size_h1)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
+                    "<h3>" -> viewToAdd = if (secondTag == "</h3>") {
+                                              wrapH3(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<h3>" -> {
-                            textSize = resources.getDimension(R.dimen.text_size_h3)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_header_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
+                    "<h4>" -> viewToAdd = if (secondTag == "</h4>") {
+                                              wrapH4(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<h4>" ->  {
-                            textSize = resources.getDimension(R.dimen.text_size_h4)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_header_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
+                    "<h5>" -> viewToAdd = if (secondTag == "</h5>") {
+                                              wrapH5(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<h5>" ->  {
-                            textSize = resources.getDimension(R.dimen.text_size_h5)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_header_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
+                    "<h6>" -> viewToAdd = if (secondTag == "</h6>") {
+                                              wrapH6(content)
+                                          } else {
+                                              null
+                                          }
 
-                        "<h6>" -> {
-                            textSize = resources.getDimension(R.dimen.text_size_h6)
-                            textStyle = Typeface.BOLD
-                            textColor = resources.getColor(R.color.text_header, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_header_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_header_bottom)
-                        }
+                    "<p>" -> viewToAdd = if (secondTag == "</p>") {
+                                             wrapP(content)
+                                         } else {
+                                             wrapPBegin(content)
+                                         }
 
-                        "<ol>" -> {
-                            orderStack.push(1)
-                            ordered = true
-                        }
+                    "<div>" -> viewToAdd = if (secondTag == "</div>") {
+                                               wrapD(content)
+                                           } else {
+                                               wrapDBegin(content)
+                                           }
 
-                        "<ul>" -> {
-                            ordered = false
-                        }
+                    "<code>" ->  viewToAdd = if (secondTag == "</code>") {
+                                                 if (codeView == null) {
+                                                     codeView = wrapC(content)
+                                                     val scrollView = HorizontalScrollView(this)
+                                                     val llScrollLayout = LinearLayout(this)
+                                                     llScrollLayout.addView(codeView)
+                                                     scrollView.addView(llScrollLayout)
+                                                     scrollView.setBackgroundColor(resources.getColor(R.color.black, null))
+                                                     scrollView
+                                                 } else {
+                                                     wrapCAdd(codeView, content)
+                                                     null
+                                                 }
+                                             } else {
+                                                 null
+                                             }
 
-                        "<mark>" -> {
-                            mark = true
-                            backgroundColor = resources.getColor(R.color.back_mark, null)
-                            textColor = resources.getColor(R.color.text_mark, null)
-                            textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                        }
+                    "<mark>" -> viewToAdd = if (secondTag == "</mark>") {
+                                                wrapM(content)
+                                            } else {
+                                                null
+                                            }
 
-                        "<code>" -> {
-                            code = true
-                            textTypeFace = Typeface.MONOSPACE
-                            textTopPadding = resources.getDimension(R.dimen.padding_code_vertical)
-                            textBotPadding = resources.getDimension(R.dimen.padding_code_vertical)
-                            textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                            if (!mark) {
-                                backgroundColor = resources.getColor(R.color.back_code, null)
-                                textColor = resources.getColor(R.color.text_code, null)
-                            }
-                        }
+                    "<li>" -> viewToAdd = //if (secondTag == "</li>") {
+                                              if (ordered) wrapOL(content)
+                                              else wrapUL(content)
+                                          /*} else {
+                                              if (ordered) wrapOLBegin(content)
+                                              else wrapULBegin(content)
+                                          }*/
+
+                    "<ol>" -> {
+                        ordered = true
+                        orderStack.push(1)
+                        viewToAdd = wrap(content)
                     }
 
-                    content = text.substring(indexAfterFirst, indexOfSecond)
-                    trimmedContent = content.trim()
-                    if (listElem) {
-                        val marker = StringBuilder()
-                        if (ordered) {
-                            var order = orderStack.pop()
-                            marker.append("$order. ")
-                            orderStack.push(++order)
-                        } else {
-                            marker.append("$unorderedMarker ")
-                        }
-                        trimmedContent = marker.append(trimmedContent).toString()
-                        listElem = false
+                    "<ul>" -> {
+                        ordered = false
+                        viewToAdd = wrap(content)
                     }
-                } else {
-                    when (first) {
-                        "</html>", "</body>" -> return
 
-                        "</h2>", "</h1>", "</h3>", "</h4>", "</h5>", "</h6>" -> {
-                            textSize = resources.getDimension(R.dimen.default_text_size)
-                            textStyle = Typeface.NORMAL
-                            textColor = resources.getColor(R.color.text_default, null)
-                            //textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                            //textBotMargin = resources.getDimension(R.dimen.margin_default_bottom)
-                        }
+                    "</h1>", "</h2>", "</h3>",
+                    "</h4>", "</h5>", "</h6>",
+                    "</div>", "</p>", "</ul>",
+                    "</mark>" -> viewToAdd = if (secondTag == "</p>") {
+                                                 wrapPEnd(content)
+                                             } else if (secondTag == "</div>") {
+                                                 wrapDEnd(content)
+                                             } else {
+                                                 wrap(content)
+                                             }
 
-                        "</li>" -> {
-                            listElem = false
-                            textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                            textBotMargin = resources.getDimension(R.dimen.margin_default_bottom)
-                        }
+                    "</code>" -> viewToAdd = if (secondTag == "</p>") {
+                                                 codeView = null
+                                                 wrapPEnd(content)
+                                             } else if (secondTag == "</div>") {
+                                                 codeView = null
+                                                 wrapDEnd(content)
+                                             } else if (secondTag == "<code>" && emptyPattern.matcher(content).find()) {
+                                                 null
+                                             } else {
+                                                 codeView = null
+                                                 wrap(content)
+                                             }
 
-                        "</div>" -> {
-                            textTopMargin = resources.getDimension(R.dimen.margin_default_top)
-                            textBotMargin = resources.getDimension(R.dimen.margin_default_bottom)
-                        }
-
-                        "</ol>" -> {
-                            orderStack.pop()
-                            ordered = false
-                            firstListElem = true
-                        }
-
-                        "</ul>" -> {
-                            firstListElem = true
-                        }
-
-                        "</mark>" -> {
-                            mark = false
-                            if (code) {
-                                backgroundColor = resources.getColor(R.color.back_code, null)
-                                textColor = resources.getColor(R.color.text_code, null)
-                            } else {
-                                backgroundColor = resources.getColor(R.color.transparency, null)
-                                textColor = resources.getColor(R.color.text_default, null)
-                            }
-                        }
-
-                        "</code>" -> {
-                            code = false
-                            textTypeFace = Typeface.DEFAULT
-                            textTopPadding = resources.getDimension(R.dimen.padding_default_top)
-                            textBotPadding = resources.getDimension(R.dimen.padding_default_bottom)
-                            if (!mark) {
-                                backgroundColor = resources.getColor(R.color.transparency, null)
-                                textColor = resources.getColor(R.color.text_default, null)
-                            }
-                        }
+                    "</ol>" -> {
+                        viewToAdd = if (secondTag == "</p>") {
+                                        wrapPEnd(content)
+                                    } else if (secondTag == "</div>") {
+                                        wrapDEnd(content)
+                                    } else {
+                                        wrap(content)
+                                    }
+                        orderStack.pop()
                     }
-                    content = text.substring(indexAfterFirst, indexOfSecond)
-                    trimmedContent = content.trim()
+
+                    else -> viewToAdd = null
                 }
-                if (trimmedContent.isNotEmpty()) {
-                    var viewToAdd = wrap(trimmedContent)
-                    (viewToAdd as TextView).textSize = textSize
-                    viewToAdd.setTypeface(textTypeFace, textStyle)
 
-                    viewToAdd.setPadding(textLeftPadding.toInt(), textTopPadding.toInt(), textRightPadding.toInt(), textBotPadding.toInt())
+            }
 
-                    viewToAdd.setTextColor(textColor)
-
-                    if (code) {
-                        val scrollView = HorizontalScrollView(this)
-                        val codeLayout = LinearLayout(this)
-                        codeLayout.addView(viewToAdd)
-                        scrollView.addView(codeLayout)
-                        viewToAdd = scrollView
-                    }
-
-                    val layoutParams: LinearLayout.LayoutParams  = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                    layoutParams.topMargin = textTopMargin.toInt()
-                    layoutParams.bottomMargin = textBotMargin.toInt()
-                    layoutParams.marginStart = textLeftMargin.toInt()
-                    layoutParams.marginEnd = textRightMargin.toInt()
-
-                    viewToAdd.layoutParams = layoutParams
-
-                    viewToAdd.setBackgroundColor(backgroundColor)
-                    result.addView(viewToAdd)
-                }
-                indexAfterFirst = indexOfSecond
+            if (viewToAdd != null) {
+                result.addView(viewToAdd)
             }
         }
     }
 
-    private fun wrap(content: String): View {
-
+    private fun wrap(content: String): TextView {
         val view = TextView(this)
-
-        val ltText = ltPattern.matcher(content).replaceAll("<")
-        val gtText = gtPattern.matcher(ltText).replaceAll(">")
-        view.text = nbspPattern.matcher(gtText).replaceAll(" ")
-
+        view.typeface = Typeface.SERIF
+        if (emptyPattern.matcher(content).find()) {
+            view.height = 0
+        }
+        view.text = content
         return view
     }
 
-    private fun clearTabs(text: StringBuilder ): StringBuilder {
-        return StringBuilder(Pattern.compile("((?<=[ \t])[ \t]+)")
-                .matcher(text)
-                .replaceAll(""))
+    private fun wrapH1(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h1)
+        view.gravity = Gravity.CENTER_HORIZONTAL
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_h1).toInt()
+        view.layoutParams = lpView
+        return view
     }
 
-    private fun isOpening(tag: String) = tag.indexOf("/") == -1
+    private fun wrapH2(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h2)
+        return view
+    }
+
+    private fun wrapH3(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h3)
+        return view
+    }
+
+    private fun wrapH4(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h4)
+        return view
+    }
+
+    private fun wrapH5(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h5)
+        return view
+    }
+
+    private fun wrapH6(content: String): TextView {
+        val view = wrap(content)
+        view.textSize = resources.getDimension(R.dimen.text_aa_h6)
+        return view
+    }
+
+    private fun wrapP(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_p).toInt()
+        lpView.bottomMargin = resources.getDimension(R.dimen.margin_aa_p).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapPBegin(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_p).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapPEnd(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.bottomMargin = resources.getDimension(R.dimen.margin_aa_p).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapD(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_div).toInt()
+        lpView.bottomMargin = resources.getDimension(R.dimen.margin_aa_div).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapDBegin(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_div).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapDEnd(content: String): TextView {
+        val view = wrap(content)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.bottomMargin = resources.getDimension(R.dimen.margin_aa_div).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapC(content: String): TextView {
+        val view = wrap(content)
+        view.typeface = Typeface.MONOSPACE
+        view.setTextColor(resources.getColor(R.color.code_text, null))
+        view.setPadding(resources.getDimension(R.dimen.padding_aa_code).toInt(), resources.getDimension(R.dimen.padding_aa_code).toInt(), 0, resources.getDimension(R.dimen.padding_aa_code).toInt())
+        return view
+    }
+
+    private fun wrapCAdd(codeView: TextView, content: String): Unit {
+        codeView.append("\n$content")
+    }
+
+    private fun wrapM(content: String): TextView {
+        val view = wrap(content)
+        view.typeface = Typeface.create(view.typeface, Typeface.BOLD)
+        view.setTextColor(resources.getColor(R.color.mark_text, null))
+        view.setBackgroundColor(resources.getColor(R.color.mark_back, null))
+        view.setPadding(resources.getDimension(R.dimen.padding_aa_mark).toInt())
+        return view
+    }
+
+    private fun wrapOL(content: String): TextView {
+        val listedContent = "${orderStack.peek()}. $content"
+        orderStack.push(orderStack.pop() + 1)
+        val view = wrap(listedContent)
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_li).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun wrapUL(content: String): TextView {
+        val view = wrap("$unorderedMarker $content")
+        val lpView = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        lpView.topMargin = resources.getDimension(R.dimen.margin_aa_li).toInt()
+        view.layoutParams = lpView
+        return view
+    }
+
+    private fun convertSpecials(content: String): String {
+        val ltText = ltPattern.matcher(content.trim()).replaceAll("<")
+        val gtText = gtPattern.matcher(ltText).replaceAll(">")
+        return nbspPattern.matcher(gtText).replaceAll(" ")
+    }
+
+    private fun clearTabs(text: StringBuilder) = StringBuilder(tabPattern.matcher(text).replaceAll(""))
 }

@@ -1,11 +1,11 @@
 package xyz.wrabzy.knowledge
 
 class Knowledge(
-    var folders: MutableList<Folder>,
-    var articles: MutableList<Article>,
-    var contentCount: Int,
-    var lastUpdate: Long
-) {
+        folders: MutableList<Folder>,
+        articles: MutableList<Article>,
+        contentCount: Int,
+        lastUpdate: Long
+): Folder(folders, articles, contentCount, lastUpdate) {
     override fun toString(): String {
         val stringBuilder = StringBuilder("Knowledge\n")
 

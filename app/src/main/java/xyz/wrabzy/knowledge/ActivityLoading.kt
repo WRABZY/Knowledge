@@ -3,6 +3,7 @@ package xyz.wrabzy.knowledge
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import java.io.FileNotFoundException
@@ -16,6 +17,9 @@ class ActivityLoading : AppCompatActivity() {
 
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val logo = findViewById<ImageView>(R.id.ivLogo)
+        logo.setColorFilter(resources.getColor(R.color.green_status, null))
+
         progressBar.isIndeterminate = false
         progressBar.progress = 0
         progressBar.max = 100
@@ -30,8 +34,8 @@ class ActivityLoading : AppCompatActivity() {
                 if (maybeSeed.exceptions[0].javaClass == UnknownHostException::class.java) {
                     if (!statusChangedOnYellow) {
                         tvStatus.post {
-                            tvStatus.text = resources.getString(R.string.unknown_host)
-                            tvStatus.setTextColor(resources.getColor(R.color.yellow_status, null))
+                            tvStatus.hint = resources.getString(R.string.unknown_host)
+                            logo.setColorFilter(resources.getColor(R.color.yellow_status, null))
                             statusChangedOnYellow = true
                             statusChangedOnRed = false
                         }
@@ -40,8 +44,8 @@ class ActivityLoading : AppCompatActivity() {
                     maybeSeed = InitController.seed()
                 } else  {
                     tvStatus.post {
-                        tvStatus.text = resources.getString(R.string.file_not_found)
-                        tvStatus.setTextColor(resources.getColor(R.color.red_status, null))
+                        tvStatus.hint = resources.getString(R.string.file_not_found)
+                        logo.setColorFilter(resources.getColor(R.color.red_status, null))
                         statusChangedOnYellow = false
                         statusChangedOnRed = true
                     }
@@ -51,7 +55,8 @@ class ActivityLoading : AppCompatActivity() {
             if (!statusChangedOnRed) {
                 if (statusChangedOnYellow) {
                     tvStatus.post {
-                        tvStatus.text = ""
+                        tvStatus.hint = resources.getString(R.string.tv_Loading)
+                        logo.setColorFilter(resources.getColor(R.color.green_status, null))
                     }
                     statusChangedOnYellow = false
                 }
@@ -68,6 +73,7 @@ class ActivityLoading : AppCompatActivity() {
                 tvStatus.post {
                     val intent = Intent(this, ActivityList::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK + Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    intent.putExtra("url", "")
                     startActivity(intent)
                 }
             }

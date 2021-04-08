@@ -2,22 +2,18 @@ package xyz.wrabzy.knowledge
 
 import java.util.ArrayList
 
-class Folder(val relativeURL: String) {
+open class Folder {
 
-    val wayFromRoot: String
-    val name: String
-    val catalog: String
-    val nameToShow: String
-    val contentCount: Int
-    val birth: Long
+    var wayFromRoot: String = ""
+    var name: String = ""
+    var catalog: String = ""
+    var nameToShow: String = ""
+    var contentCount: Int
+    var birth: Long
+    var folders: MutableList<Folder> = ArrayList<Folder>()
+    var articles: MutableList<Article> = ArrayList<Article>()
 
-    var filesLoaded: Int = 0
-
-    val folders: MutableList<Folder> = ArrayList<Folder>()
-    val articles: MutableList<Article> = ArrayList<Article>()
-
-
-    init {
+    constructor(relativeURL: String) {
         val lastIndexOfSlash = relativeURL.lastIndexOf("/")
         wayFromRoot = if (lastIndexOfSlash != -1) relativeURL.substring(0, lastIndexOfSlash) else Home.address()
         name = relativeURL.substring(lastIndexOfSlash + 1)
@@ -82,7 +78,26 @@ class Folder(val relativeURL: String) {
         }.start()
     }
 
+    constructor(_folders: MutableList<Folder> = ArrayList<Folder>(),
+                 _articles: MutableList<Article> = ArrayList<Article>(),
+                 _contentCount: Int,
+                 _birth: Long) {
+        folders = _folders
+        articles = _articles
+        contentCount = _contentCount
+        birth = _birth
+    }
+
+
+
+    var filesLoaded: Int = 0
+
+
+
+
+
     fun filesLoaded() = filesLoaded
+
 
     override fun toString(): String {
         val stringBuilder: StringBuilder  = StringBuilder("Folder $nameToShow:\n")
@@ -117,5 +132,17 @@ class Folder(val relativeURL: String) {
             articlesNames.delete(articlesNames.length - 2, articlesNames.length)
         }
         return articlesNames.toString()
+    }
+
+    fun getFolder(index: Int, urls: ArrayList<String>): Folder {
+
+        var nextFolder: Folder = this
+        for (folder in folders) {
+            if (urls[index] == folder.name) {
+                nextFolder = folder
+            }
+        }
+        return if (index == urls.size - 1) nextFolder
+        else nextFolder.getFolder(index + 1, urls)
     }
 }

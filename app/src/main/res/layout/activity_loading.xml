@@ -7,7 +7,7 @@
     tools:context=".ActivityLoading">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/ivLogo"
         android:contentDescription="@string/logoDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,6 @@
         android:fontFamily="monospace"
         android:hint="@string/tv_Loading"
         android:textAllCaps="true"
-        android:textSize="@dimen/tvStatusTextSize"
         android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"

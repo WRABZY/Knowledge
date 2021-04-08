@@ -10,18 +10,20 @@
 
     <color name="text_header">#3CCFB5</color>
 
-    <color name="back_mark">#5F0909</color>
-    <color name="text_mark">#FFCC15</color>
-    <color name="back_code">#000000</color>
-    <color name="text_code">#467200</color>
+    <color name="mark_back">#856402</color>
+    <color name="mark_text">#FFFFFF</color>
+    <color name="code_back">#000000</color>
+    <color name="code_text">#74AA1C</color>
 
     <color name="back_default">#1B1B1B</color>
     <color name="text_default">#B7B7B7</color>
+    <color name="text_banner">#ECECEC</color>
 
     <color name="back_row">#202020</color>
     <color name="back_row_deep">#161616</color>
 
-    <color name="yellow_status">#FFB701</color>
-    <color name="red_status">#F10000</color>
+    <color name="green_status">#74AA1C</color>
+    <color name="yellow_status">#F5C413</color>
+    <color name="red_status">#A80A0A</color>
     <color name="transparency">#00000000</color>
 </resources>
