@@ -12,7 +12,7 @@ private val logger = Logger.getLogger("xyz.wrabzy.knowledge.Extractor")
  */
 class Extractor private constructor(
     val contentCount: Int = 0,
-    val birth: Long,
+    val birth: Long = 0,
     val foldersURLs: ArrayList<String>? = null,
     val articlesURLs: ArrayList<String>? = null,
     val fileNameToShow: String = ""
@@ -31,7 +31,7 @@ class Extractor private constructor(
         /**
          * Fabric of extractor, that contains information about file
          * */
-        fun ofArticle(text: String) = Extractor(birth = watchBirth(text), fileNameToShow = watchArticleName(text))
+        fun ofArticle(text: String) = Extractor(fileNameToShow = watchArticleName(text))
 
         /**
          * @return count of content-files inside this directory, array of folders URLs and array of files URLs of this directory
@@ -72,7 +72,8 @@ class Extractor private constructor(
                 getArticles(text).forEach {
                     logger.fine("Extracting URL of file from [$it]")
                     val endIndexOfDot = it.indexOf(".")
-                    articlesURLs.add(it.substring(0, endIndexOfDot))
+                    //articlesURLs.add(it.substring(0, endIndexOfDot))
+                    articlesURLs.add(it)
                     logger.fine("URL added: ${articlesURLs[articlesURLs.count() - 1]}")
                     filesFoundInsideThisFolder++
                     logger.fine("Count of files in this folder: $filesFoundInsideThisFolder")
@@ -113,7 +114,7 @@ class Extractor private constructor(
             val helpFulPart = extract(text, "<ol>", "</ol>")
             logger.fine("Block of lines with articles URLs: $helpFulPart")
 
-            val matcher = Pattern.compile("((?<=<li>)[a-zA-Z0-9;& _]+\\.html(?=</li>))").matcher(helpFulPart)
+            val matcher = Pattern.compile("((?<=<li>)[a-zA-Z0-9;& _]+\\.html<mark>\\d+</mark>(?=</li>))").matcher(helpFulPart)
             while (matcher.find()) {
                 listItems.add(matcher.group().trim())
             }
@@ -138,7 +139,7 @@ class Extractor private constructor(
         }
 
         private fun watchBirth(text: String) = try {
-            extract(text, "<div class=\"UT\">", "</div>").toLong()
+            extract(text, "<meta class=\"UT\">", "</meta>").toLong()
         } catch (nfe: NumberFormatException) {
             0
         }
@@ -183,6 +184,7 @@ fun main() {
                 |</ol>
             """.trimMargin())
 */
+/*
     Extractor.ofArticle(
             """<h1>TEST FILE</h1> 
                 |<html>
@@ -195,5 +197,5 @@ fun main() {
                 |</div>
                 |</html>
             """.trimMargin())
-
+*/
 }

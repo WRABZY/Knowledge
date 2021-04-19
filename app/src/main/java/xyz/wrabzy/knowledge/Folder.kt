@@ -72,7 +72,7 @@ open class Folder {
             val articleNames = extractor.articlesURLs
             if (articleNames != null) {
                 for (articleName in articleNames) {
-                    articles.add(Article("$relativeURL/$articleName.html"))
+                    articles.add(Article("$relativeURL/$articleName"))
                 }
             }
         }.start()
